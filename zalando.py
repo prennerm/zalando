@@ -45,7 +45,7 @@ model = Sequential(
         MaxPooling2D((2, 2)),
         Flatten(),
         Dense(64, activation="relu"),
-        Dropout(0.5),
+        Dropout(0.25),
         Dense(10, activation="softmax"),
     ]
 )
@@ -54,20 +54,18 @@ model = Sequential(
 model.compile(
     optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"]
 )
-model.fit(x_train, y_train, epochs=10)
-
-model.compile(
-    optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"]
+num_epochs = st.slider("Number of epochs", min_value=1, max_value=20, value=2)
+model.fit(
+    x_train, y_train, epochs=num_epochs, batch_size=32, validation_data=(x_test, y_test)
 )
-model.fit(x_train, y_train, epochs=10, batch_size=32, validation_data=(x_test, y_test))
 
 # test the model
 test_loss, test_acc = model.evaluate(x_test, y_test, verbose=2)
 
 # streamlit widgets for depiction
 st.subheader("Test Accuracy")
-st.write(f"Testgenauigkeit: {test_acc}")
-st.write(f"Testverlust: {test_loss}")
+st.write(f"Test Accuracy: {test_acc}")
+st.write(f"Test Loss: {test_loss}")
 
 # draw a confusion matrix
 y_pred = model.predict(x_test)
@@ -76,16 +74,16 @@ y_pred_classes = [np.argmax(element) for element in y_pred]
 # calculate confusion matrix
 cm = confusion_matrix(y_test, y_pred_classes)
 
-st.subheader("Konfusionsmatrix")
+st.subheader("Confusion matrix")
 # visualize confusion matrix
 fig, ax = plt.subplots(figsize=(10, 7))
 sns.heatmap(cm, annot=True, fmt="d", ax=ax)
-plt.xlabel("Vorhergesagte")
-plt.ylabel("Tatsächliche")
+plt.xlabel("Predicted")
+plt.ylabel("True")
 st.pyplot(fig)
 
 # classification report
-st.subheader("Klassifikationsbericht")
+st.subheader("Classification report")
 print(classification_report(y_test, y_pred_classes))
 
 # binarize labels for multiclass roc curve
@@ -101,7 +99,7 @@ for i in range(10):
     roc_auc[i] = auc(fpr[i], tpr[i])
 
 # plot roc curve
-st.subheader("ROC-Kurve")
+st.subheader("ROC-Curve")
 fig, ax = plt.subplots(figsize=(10, 7))
 for i in range(10):
     plt.plot(fpr[i], tpr[i], label="ROC curve (area = %0.2f)" % roc_auc[i])
@@ -118,14 +116,14 @@ for i in range(len(y_pred_classes)):
         misclassified_idx.append(i)
 
 # plot misclassified images
-st.subheader("Falsch klassifizierte Bilder")
+st.subheader("Misclassified images")
 random.shuffle(misclassified_idx)
 fig, axs = plt.subplots(3, 3, figsize=(10, 7))
 for i in range(0, 9):
     ax = axs[i // 3, i % 3]
     ax.imshow(x_test[misclassified_idx[i]].reshape(28, 28), cmap=plt.get_cmap("gray"))
     ax.set_title(
-        "Vorhergesagt: {} \n Tatsächlich: {}".format(
+        "Predicted: {} \n True: {}".format(
             y_pred_classes[misclassified_idx[i]], y_test[misclassified_idx[i]]
         )
     )
