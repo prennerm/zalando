@@ -1,0 +1,23 @@
+# TensorFlow für Modellbildung und Deep Learning
+tensorflow==2.6.0
+
+# Pandas für Datenmanipulation und -analyse
+pandas==1.3.3
+
+# NumPy für mathematische Operationen
+numpy==1.21.2
+
+# Matplotlib für Datenvisualisierung
+matplotlib==3.4.3
+
+# Seaborn für statistische Datenvisualisierung
+seaborn==0.11.2
+
+# Scikit-learn für Klassifizierungsbericht und Konfusionsmatrix
+scikit-learn==0.24.2
+
+# Sweetviz für automatische EDA
+sweetviz==2.1.3
+
+#Streamlit
+streamlit
